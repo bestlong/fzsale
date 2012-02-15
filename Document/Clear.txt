@@ -1,0 +1,339 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[After_Insert_Order]') and OBJECTPROPERTY(id, N'IsTrigger') = 1)
+drop trigger [dbo].[After_Insert_Order]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[After_Insert_Sale]') and OBJECTPROPERTY(id, N'IsTrigger') = 1)
+drop trigger [dbo].[After_Insert_Sale]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_AutoWarn]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_AutoWarn]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_MACRebind]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_MACRebind]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_Order]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_Order]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_OrderAdjust]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_OrderAdjust]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_OrderDeal]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_OrderDeal]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_OrderDtl]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_OrderDtl]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_Product]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_Product]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_Sale]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_Sale]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[HX_T_SaleDtl]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[HX_T_SaleDtl]
+GO
+
+CREATE TABLE [dbo].[HX_T_AutoWarn] (
+	[R_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[R_Sync] [char] (1) COLLATE Chinese_PRC_CI_AS NULL ,
+	[W_TerminalId] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[W_Product] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[W_AvgNum] [int] NULL ,
+	[W_Status] [char] (1) COLLATE Chinese_PRC_CI_AS NULL 
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[HX_T_MACRebind] (
+	[M_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[M_MAC] [varchar] (32) COLLATE Chinese_PRC_CI_AS NULL ,
+	[M_TerminalId] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[M_ReqTime] [datetime] NULL ,
+	[M_Allow] [char] (1) COLLATE Chinese_PRC_CI_AS NULL ,
+	[M_AllowMan] [char] (32) COLLATE Chinese_PRC_CI_AS NULL ,
+	[M_AllowTime] [datetime] NULL 
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[HX_T_Order] (
+	[R_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[O_ID] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[O_TerminalId] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[O_Number] [int] NULL ,
+	[O_DoneNum] [int] NULL ,
+	[O_Man] [varchar] (32) COLLATE Chinese_PRC_CI_AS NULL ,
+	[O_Date] [datetime] NULL ,
+	[O_ActDate] [datetime] NULL ,
+	[O_Status] [char] (1) COLLATE Chinese_PRC_CI_AS NULL 
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[HX_T_OrderAdjust] (
+	[R_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[A_Order] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[A_Product] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[A_Number] [int] NULL ,
+	[A_Man] [varchar] (32) COLLATE Chinese_PRC_CI_AS NULL ,
+	[A_Date] [datetime] NULL ,
+	[A_Memo] [varchar] (80) COLLATE Chinese_PRC_CI_AS NULL ,
+	[A_NewNum] [int] NULL 
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[HX_T_OrderDeal] (
+	[R_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[D_Order] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_Product] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_Number] [int] NULL ,
+	[D_Price] [decimal](15, 5) NULL ,
+	[D_Man] [varchar] (32) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_Date] [datetime] NULL ,
+	[D_Memo] [varchar] (80) COLLATE Chinese_PRC_CI_AS NULL 
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[HX_T_OrderDtl] (
+	[R_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[D_Order] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_Product] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_Number] [int] NULL ,
+	[D_Price] [decimal](15, 5) NULL ,
+	[D_HasIn] [int] NULL ,
+	[D_InDate] [datetime] NULL 
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[HX_T_Product] (
+	[R_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[R_Sync] [char] (1) COLLATE Chinese_PRC_CI_AS NULL ,
+	[P_ID] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[P_Color] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[P_Size] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[P_Number] [int] NULL ,
+	[P_Price] [decimal](15, 5) NULL ,
+	[P_OldPrice] [decimal](15, 5) NULL ,
+	[P_TerminalId] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[P_InPrice] [decimal](15, 5) NULL ,
+	[P_LastIn] [datetime] NULL 
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[HX_T_Sale] (
+	[R_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[R_Sync] [char] (1) COLLATE Chinese_PRC_CI_AS NULL ,
+	[S_ID] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[S_TerminalId] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[S_Number] [int] NULL ,
+	[S_Money] [decimal](15, 5) NULL ,
+	[S_Member] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[S_Deduct] [decimal](15, 5) NULL ,
+	[S_DeMoney] [decimal](15, 5) NULL ,
+	[S_Man] [varchar] (32) COLLATE Chinese_PRC_CI_AS NULL ,
+	[S_Date] [datetime] NULL 
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[HX_T_SaleDtl] (
+	[R_ID] [int] IDENTITY (1, 1) NOT NULL ,
+	[R_Sync] [char] (1) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_SaleID] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_Product] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_Number] [int] NULL ,
+	[D_Price] [decimal](15, 5) NULL ,
+	[D_Member] [varchar] (15) COLLATE Chinese_PRC_CI_AS NULL ,
+	[D_Deduct] [decimal](15, 5) NULL ,
+	[D_DeMoney] [decimal](15, 5) NULL 
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[HX_T_AutoWarn] WITH NOCHECK ADD 
+	 PRIMARY KEY  CLUSTERED 
+	(
+		[R_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_MACRebind] WITH NOCHECK ADD 
+	 PRIMARY KEY  CLUSTERED 
+	(
+		[M_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_Order] WITH NOCHECK ADD 
+	 PRIMARY KEY  CLUSTERED 
+	(
+		[R_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_OrderAdjust] WITH NOCHECK ADD 
+	 PRIMARY KEY  CLUSTERED 
+	(
+		[R_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_OrderDeal] WITH NOCHECK ADD 
+	 PRIMARY KEY  CLUSTERED 
+	(
+		[R_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_OrderDtl] WITH NOCHECK ADD 
+	 PRIMARY KEY  CLUSTERED 
+	(
+		[R_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_Product] WITH NOCHECK ADD 
+	CONSTRAINT [PK__HX_T_Product__43A1090D] PRIMARY KEY  CLUSTERED 
+	(
+		[R_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_Sale] WITH NOCHECK ADD 
+	 PRIMARY KEY  CLUSTERED 
+	(
+		[R_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_SaleDtl] WITH NOCHECK ADD 
+	 PRIMARY KEY  CLUSTERED 
+	(
+		[R_ID]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[HX_T_MACRebind] ADD 
+	CONSTRAINT [DF__HX_T_MACR__M_All__7B5B524B] DEFAULT ('N') FOR [M_Allow]
+GO
+
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+CREATE TRIGGER [After_Insert_Order] ON [dbo].[HX_T_Order]
+AFTER INSERT
+AS
+  Declare @nRID int
+  Declare @nOID varchar(15)
+  Declare @nNow int
+
+  Declare @num int
+  Declare @strNum varchar(20)
+  Declare @prefix varchar(10)
+  Declare @Numlen int
+  Declare @strDate varchar(20)
+
+  --获取当前日期
+  set @strDate=substring(convert(varchar(10),getdate(),112),3,6)
+
+ --设置流水号的长度
+  set @Numlen = 3
+
+  --设置前缀
+  set @prefix = 'D'
+
+  --获取当前记录号
+  Select @nNow=Max(R_ID) From HX_T_Order
+
+  --获取当天最大编号
+  Select Top 1 @nRID=R_ID,@nOID=O_ID From HX_T_Order
+  Where O_ID like @prefix + @strDate +  '%' Order By O_ID DESC
+
+  if @nRID is null
+    set @num=1
+  else
+  begin
+    set @num=cast(replace(@nOID,@prefix + @strDate ,'') as int)
+    set @num=@nNow - (@nRID - @num)
+  end
+
+  --格式化编号
+  set @strNum = cast(@num as varchar(10))
+
+  while(len(@strNum)<@Numlen)
+    set @strNum = '0' + @strNum
+  set  @strNum=@prefix + @strDate + @strNum
+
+  --更新编号
+  Update HX_T_Order Set O_ID=@strNum Where R_ID=@nNow
+GO
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+CREATE TRIGGER [After_Insert_Sale] ON [dbo].[HX_T_Sale]
+AFTER INSERT
+AS
+  Declare @nRID int
+  Declare @nSID varchar(15)
+  Declare @nNow int
+
+  Declare @num int
+  Declare @strNum varchar(20)
+  Declare @prefix varchar(10)
+  Declare @Numlen int
+  Declare @strDate varchar(20)
+
+  --获取当前日期
+  set @strDate=substring(convert(varchar(10),getdate(),112),3,6)
+
+ --设置流水号的长度
+  set @Numlen = 3
+
+  --设置前缀
+  set @prefix = 'S'
+
+  --获取当前记录号
+  Select @nNow=Max(R_ID) From HX_T_Sale
+
+  --获取当天最大编号
+  Select Top 1 @nRID=R_ID,@nSID=S_ID From HX_T_Sale
+  Where S_ID like @prefix + @strDate +  '%' Order By S_ID DESC
+
+  if @nRID is null
+    set @num=1
+  else
+  begin
+    set @num=cast(replace(@nSID,@prefix + @strDate ,'') as int)
+    set @num=@nNow - (@nRID - @num)
+  end
+
+  --格式化编号
+  set @strNum = cast(@num as varchar(10))
+
+  while(len(@strNum)<@Numlen)
+    set @strNum = '0' + @strNum
+  set  @strNum=@prefix + @strDate + @strNum
+
+  --更新编号
+  Update  HX_T_Sale Set S_ID=@strNum Where R_ID=@nNow
+
+
+
+GO
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
